@@ -1,8 +1,8 @@
 # Define Mosquitto version, see also .github/workflows/build_and_push_docker_images.yml for
 # the automatically built images
-ARG MOSQUITTO_VERSION=2.0.18
+ARG MOSQUITTO_VERSION=2.0.20
 # Define libwebsocket version
-ARG LWS_VERSION=4.2.2
+ARG LWS_VERSION=4.3.3
 
 # Use debian:stable-slim as a builder for Mosquitto and dependencies.
 FROM debian:stable-slim as mosquitto_builder
@@ -72,6 +72,9 @@ RUN set -ex; \
     case "$TARGETPLATFORM" in \
   "linux/arm64") \
     apt update && apt install -y gcc-aarch64-linux-gnu libc6-dev-arm64-cross \
+    ;; \
+  "linux/amd64") \
+    apt update && apt install -y libc6 g++-x86-64-linux-gnu libc6-dev-amd64-cross gcc \
     ;; \
   "linux/arm/v7") \
     apt update && apt install -y gcc-arm-linux-gnueabihf libc6-dev-armhf-cross \
