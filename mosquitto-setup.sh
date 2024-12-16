@@ -42,7 +42,7 @@ sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQPATH
 	%%% max_packet_size 10240000
 	%%% 
 	%%% persistence true
-	%%% persistence_location /var/mosquitto/data
+	%%% persistence_location /var/mosquitto/data/
 	%%% persistent_client_expiration 1m
 	%%% 
 	%%% retain_available true
