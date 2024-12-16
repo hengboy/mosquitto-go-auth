@@ -9,6 +9,13 @@ FROM debian:stable-slim as mosquitto_builder
 ARG MOSQUITTO_VERSION
 ARG LWS_VERSION
 
+# DeviceLinks MQTT Broker Envs
+ENV DLMB_MYSQL_HOST=127.0.0.1 \
+    DLMB_MYSQL_PORT=3306 \
+    DLMB_MYSQL_DB=mosquitto \
+    DLMB_MYSQL_USERNAME=root \
+    DLMB_MYSQL_PASSWORD=123456
+
 # Get mosquitto build dependencies.
 RUN set -ex; \
     apt-get update; \
@@ -101,17 +108,35 @@ RUN set -ex; \
     apt update; \
     apt install -y libc-ares2 openssl uuid tini wget libssl-dev libcjson-dev
 
-RUN mkdir -p /var/lib/mosquitto /var/log/mosquitto
+RUN mkdir -p /var/mosquitto/ssl /var/mosquitto/data /var/mosquitto/log /var/mosquitto/conf.d /var/mosquitto/plugins /usr/local/shell
+
 RUN set -ex; \
     groupadd mosquitto; \
     useradd -s /sbin/nologin mosquitto -g mosquitto -d /var/lib/mosquitto; \
-    chown -R mosquitto:mosquitto /var/log/mosquitto/; \
-    chown -R mosquitto:mosquitto /var/lib/mosquitto/
+    chown -R mosquitto:mosquitto /var/mosquitto/
+
+# init startup
+ADD startup.sh /usr/local/shell/startup.sh
+RUN set -ex; \
+    chmod u+x /usr/local/shell/startup.sh
+
+# init auth.conf
+ADD auth-setup.sh /usr/local/shell/auth-setup.sh
+RUN set -ex; \
+    chmod u+x /usr/local/shell/auth-setup.sh
+
+# init mosquitto.conf
+ADD mosquitto-setup.sh /usr/local/shell/mosquitto-setup.sh
+RUN set -ex; \
+    chmod u+x /usr/local/shell/mosquitto-setup.sh; \
+    bash /usr/local/shell/mosquitto-setup.sh; \
+    rm -rf /usr/local/shell/mosquitto-setup.sh
+
 
 #Copy confs, plugin so and mosquitto binary.
-COPY --from=mosquitto_builder /app/mosquitto/ /mosquitto/
-COPY --from=go_auth_builder /app/pw /mosquitto/pw
-COPY --from=go_auth_builder /app/go-auth.so /mosquitto/go-auth.so
+COPY --from=mosquitto_builder /app/mosquitto/ /var/mosquitto/
+COPY --from=go_auth_builder /app/pw /var/mosquitto/plugins/pw
+COPY --from=go_auth_builder /app/go-auth.so /var/mosquitto/plugins/go-auth.so
 COPY --from=mosquitto_builder /usr/local/sbin/mosquitto /usr/sbin/mosquitto
 
 COPY --from=mosquitto_builder /usr/local/lib/libmosquitto* /usr/local/lib/
@@ -123,7 +148,7 @@ COPY --from=mosquitto_builder /usr/local/bin/mosquitto_rr /usr/bin/mosquitto_rr
 
 RUN ldconfig;
 
-EXPOSE 1883 1884
+EXPOSE 1883 8883 8884
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD [ "/usr/sbin/mosquitto" ,"-c", "/etc/mosquitto/mosquitto.conf" ]
+CMD ["/usr/local/shell/startup.sh" ,"$DLMB_MYSQL_HOST","$DLMB_MYSQL_PORT","$DLMB_MYSQL_DB","$DLMB_MYSQL_USERNAME","$DLMB_MYSQL_PASSWORD"]
