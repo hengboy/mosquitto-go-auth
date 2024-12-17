@@ -4,7 +4,7 @@
 trap 'exit' ERR
 
 # Default location - overwritten with preceding path if one of them exists
-MOSQUITTO_CONF=/var/mosquitto/conf.d
+MOSQUITTO_CONF=/var/dlmb/conf.d
 
 # Mosquitto configuration filename
 AUTH_CONF=auth.conf
@@ -19,7 +19,7 @@ if [ -f $AUTH_PATH ]; then
 fi
 
 sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $AUTH_PATH
-	%%% auth_plugin /var/mosquitto/plugins/go-auth.so
+	%%% auth_plugin /var/dlmb/plugins/go-auth.so
 	%%% auth_opt_backends mysql
 	%%% # Hashing
 	%%% auth_opt_hasher $DLMB_AUTH_HASHER

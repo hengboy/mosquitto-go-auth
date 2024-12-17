@@ -22,13 +22,13 @@ if [ -f $MOSQUITTO_PATH ]; then
 fi
 
 sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQUITTO_PATH
-	%%% include_dir /var/mosquitto/conf.d
+	%%% include_dir /var/dlmb/conf.d
 	%%% 
 	%%% allow_anonymous false
 	%%% autosave_interval 1800
 	%%% 
 	%%% connection_messages true
-	%%% log_dest file /var/mosquitto/log/mosquitto.log
+	%%% log_dest file /var/dlmb/log/mosquitto.log
 	%%% log_dest topic
 	%%% log_type error
 	%%% log_type warning
@@ -41,7 +41,7 @@ sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQUITTO_PATH
 	%%% max_packet_size 10240000
 	%%% 
 	%%% persistence true
-	%%% persistence_location /var/mosquitto/data/
+	%%% persistence_location /var/dlmb/data/
 	%%% persistent_client_expiration 1m
 	%%% 
 	%%% retain_available true
@@ -51,17 +51,17 @@ sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQUITTO_PATH
 	%%% 
 	%%% # Two-way TLS authentication
 	%%% listener 8883
-	%%% cafile /var/mosquitto/ssl/ca.crt
-	%%% certfile /var/mosquitto/ssl/server.crt
-	%%% keyfile /var/mosquitto/ssl/server.key
+	%%% cafile /var/dlmb/ssl/ca.crt
+	%%% certfile /var/dlmb/ssl/server.crt
+	%%% keyfile /var/dlmb/ssl/server.key
 	%%% require_certificate true
 	%%% use_identity_as_username false
 	%%% 
 	%%% # One-way TLS authentication
 	%%% listener 8884
-	%%% cafile /var/mosquitto/ssl/ca.crt
-	%%% certfile /var/mosquitto/ssl/server.crt
-	%%% keyfile /var/mosquitto/ssl/server.key
+	%%% cafile /var/dlmb/ssl/ca.crt
+	%%% certfile /var/dlmb/ssl/server.crt
+	%%% keyfile /var/dlmb/ssl/server.key
 	%%%
 	%%% # WebSockets Connections
 	%%% listener 8099

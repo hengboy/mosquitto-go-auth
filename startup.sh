@@ -8,4 +8,4 @@ if [ -f $AUTH_SETUP_SH ]; then
 fi
 
 # startup mosquitto
-/usr/sbin/mosquitto -c /var/mosquitto/mosquitto.conf
+/usr/sbin/mosquitto -c /var/dlmb/mosquitto.conf

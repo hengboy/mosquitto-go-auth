@@ -115,12 +115,12 @@ RUN set -ex; \
     apt update; \
     apt install -y libc-ares2 openssl uuid tini wget libssl-dev libcjson-dev
 
-RUN mkdir -p /var/mosquitto/ssl /var/mosquitto/data /var/mosquitto/log /var/mosquitto/conf.d /var/mosquitto/plugins /usr/local/shell
+RUN mkdir -p /var/dlmb/ssl /var/dlmb/data /var/dlmb/log /var/dlmb/conf.d /var/dlmb/plugins /usr/local/shell
 
 RUN set -ex; \
     groupadd mosquitto; \
     useradd -s /sbin/nologin mosquitto -g mosquitto -d /var/lib/mosquitto; \
-    chown -R mosquitto:mosquitto /var/mosquitto/
+    chown -R mosquitto:mosquitto /var/dlmb/
 
 # init startup
 ADD startup.sh /usr/local/shell/startup.sh
@@ -141,8 +141,8 @@ RUN set -ex; \
 
 
 #Copy confs, plugin so and mosquitto binary.
-COPY --from=mosquitto_builder /app/mosquitto/ /var/mosquitto/
-COPY --from=go_auth_builder /app/go-auth.so /var/mosquitto/plugins/go-auth.so
+COPY --from=mosquitto_builder /app/mosquitto/ /var/dlmb/
+COPY --from=go_auth_builder /app/go-auth.so /var/dlmb/plugins/go-auth.so
 COPY --from=mosquitto_builder /usr/local/sbin/mosquitto /usr/sbin/mosquitto
 
 COPY --from=mosquitto_builder /usr/local/lib/libmosquitto* /usr/local/lib/
