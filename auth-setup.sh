@@ -21,14 +21,12 @@ fi
 sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $AUTH_PATH
 	%%% auth_plugin /var/dlmb/plugins/go-auth.so
 	%%% auth_opt_backends mysql
-	%%% # Hashing
-	%%% auth_opt_hasher $DLMB_AUTH_HASHER
-	%%% auth_opt_hasher_salt_size $DLMB_AUTH_HASHER_SALT_SIZE
-	%%% auth_opt_hasher_iterations $DLMB_AUTH_HASHER_ITERATIONS
-	%%% auth_opt_hasher_keylen $DLMB_AUTH_HASHER_KEYLEG
-	%%% auth_opt_hasher_memory $DLMB_AUTH_HASHER_MEMORY
-	%%% auth_opt_hasher_parallelism $DLMB_AUTH_HASHER_PARALLELISM
-	%%% # MySQL
+	%%% auth_opt_hasher $DLMB_HASHER
+	%%% auth_opt_hasher_salt_size $DLMB_HASHER_SALT_SIZE
+	%%% auth_opt_hasher_iterations $DLMB_HASHER_ITERATIONS
+	%%% auth_opt_hasher_keylen $DLMB_HASHER_KEYLEG
+	%%% auth_opt_hasher_memory $DLMB_HASHER_MEMORY
+	%%% auth_opt_hasher_parallelism $DLMB_HASHER_PARALLELISM
 	%%% auth_opt_mysql_host $DLMB_MYSQL_HOST
 	%%% auth_opt_mysql_port $DLMB_MYSQL_PORT
 	%%% auth_opt_mysql_dbname $DLMB_MYSQL_DB

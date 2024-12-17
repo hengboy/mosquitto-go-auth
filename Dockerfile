@@ -9,21 +9,6 @@ FROM debian:stable-slim as mosquitto_builder
 ARG MOSQUITTO_VERSION
 ARG LWS_VERSION
 
-# DeviceLinks MQTT Broker Envs
-# MySQL
-ENV DLMB_MYSQL_HOST=127.0.0.1
-ENV DLMB_MYSQL_PORT=3306
-ENV DLMB_MYSQL_DB=devicelinks
-ENV DLMB_MYSQL_USERNAME=root
-ENV DLMB_MYSQL_PASSWORD=123456
-# auth hasher
-ENV DLMB_AUTH_HASHER=argon2id
-ENV DLMB_AUTH_HASHER_SALT_SIZE=16
-ENV DLMB_AUTH_HASHER_ITERATIONS=10
-ENV DLMB_AUTH_HASHER_KEYLEG=64
-ENV DLMB_AUTH_HASHER_MEMORY=65536
-ENV DLMB_AUTH_HASHER_PARALLELISM=1
-
 # Get mosquitto build dependencies.
 RUN set -ex; \
     apt-get update; \
@@ -110,6 +95,21 @@ RUN set -ex; \
 
 #Start from a new image.
 FROM debian:stable-slim
+
+# DeviceLinks MQTT Broker Envs
+# MySQL
+ENV DLMB_MYSQL_HOST="127.0.0.1" \
+    DLMB_MYSQL_PORT=3306 \
+    DLMB_MYSQL_DB="devicelinks" \
+    DLMB_MYSQL_USERNAME="root" \
+    DLMB_MYSQL_PASSWORD="123456" \
+    # auth hasher
+    DLMB_HASHER="argon2id" \
+    DLMB_HASHER_SALT_SIZE=16 \
+    DLMB_HASHER_ITERATIONS=10 \
+    DLMB_HASHER_KEYLEG=64 \
+    DLMB_HASHER_MEMORY=65536 \
+    DLMB_HASHER_PARALLELISM=1
 
 RUN set -ex; \
     apt update; \

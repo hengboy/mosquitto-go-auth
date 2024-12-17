@@ -4,7 +4,7 @@
 trap 'exit' ERR
 
 # Default location - overwritten with preceding path if one of them exists
-MOSQUITTO_HOME=/var/mosquitto
+MOSQUITTO_HOME=/var/dlmb
 
 # Mosquitto configuration filename
 MOSQUITTO_CONF=mosquitto.conf
@@ -23,10 +23,8 @@ fi
 
 sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQUITTO_PATH
 	%%% include_dir /var/dlmb/conf.d
-	%%% 
 	%%% allow_anonymous false
 	%%% autosave_interval 1800
-	%%% 
 	%%% connection_messages true
 	%%% log_dest file /var/dlmb/log/mosquitto.log
 	%%% log_dest topic
@@ -37,18 +35,13 @@ sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQUITTO_PATH
 	%%% log_type all
 	%%% log_type debug
 	%%% log_timestamp true
-	%%% 
 	%%% max_packet_size 10240000
-	%%% 
 	%%% persistence true
 	%%% persistence_location /var/dlmb/data/
 	%%% persistent_client_expiration 1m
-	%%% 
 	%%% retain_available true
-	%%% 
 	%%% # No TLS authentication
 	%%% listener 1883
-	%%% 
 	%%% # Two-way TLS authentication
 	%%% listener 8883
 	%%% cafile /var/dlmb/ssl/ca.crt
@@ -56,13 +49,11 @@ sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQUITTO_PATH
 	%%% keyfile /var/dlmb/ssl/server.key
 	%%% require_certificate true
 	%%% use_identity_as_username false
-	%%% 
 	%%% # One-way TLS authentication
 	%%% listener 8884
 	%%% cafile /var/dlmb/ssl/ca.crt
 	%%% certfile /var/dlmb/ssl/server.crt
 	%%% keyfile /var/dlmb/ssl/server.key
-	%%%
 	%%% # WebSockets Connections
 	%%% listener 8099
   %%% protocol websockets
