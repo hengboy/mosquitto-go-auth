@@ -32,8 +32,6 @@ sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQUITTO_PATH
 	%%% log_type warning
 	%%% log_type notice
 	%%% log_type information
-	%%% log_type all
-	%%% log_type debug
 	%%% log_timestamp true
 	%%% max_packet_size 10240000
 	%%% persistence true
@@ -55,8 +53,14 @@ sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQUITTO_PATH
 	%%% certfile /var/dlmb/ssl/server.crt
 	%%% keyfile /var/dlmb/ssl/server.key
 	%%% # WebSockets Connections
-	%%% listener 8099
+	%%% listener 8088
   %%% protocol websockets
+	%%% # WebSockets TLS Connections
+	%%% listener 9099
+  %%% protocol websockets
+	%%% cafile /var/dlmb/ssl/ca.crt
+	%%% certfile /var/dlmb/ssl/server.crt
+	%%% keyfile /var/dlmb/ssl/server.key
 !ENDMOSQUITTOCONF
 
 chmod 640 $MOSQUITTO_PATH
