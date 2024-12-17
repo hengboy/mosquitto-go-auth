@@ -1,28 +1,27 @@
 #!/usr/bin/env bash
-#(@)mosquitto-setup.sh - Create a basic Mosquitto configuration w/ TLS
 
 # Replace set -e and exit with non-zero status if we experience a failure
 trap 'exit' ERR
 
 # Default location - overwritten with preceding path if one of them exists
-MOSQHOME=/var/mosquitto
+MOSQUITTO_HOME=/var/mosquitto
 
 # Mosquitto configuration filename
-MOSQCONF=mosquitto.conf
+MOSQUITTO_CONF=mosquitto.conf
 
 # create this location if it doesn't exist
-[ -d $MOSQHOME ] || mkdir $MOSQHOME
+[ -d $MOSQUITTO_HOME ] || mkdir $MOSQUITTO_HOME
 
 # Concat of path and configuration file
-MOSQPATH=$MOSQHOME/$MOSQCONF
+MOSQUITTO_PATH=$MOSQUITTO_HOME/$MOSQUITTO_CONF
 
 # If file exists, move it to a timestamp-based name
-if [ -f $MOSQPATH ]; then
-  rm $MOSQPATH
+if [ -f $MOSQUITTO_PATH ]; then
+  rm $MOSQUITTO_PATH
 	echo -n "Remove previous configuration."
 fi
 
-sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQPATH
+sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQUITTO_PATH
 	%%% include_dir /var/mosquitto/conf.d
 	%%% 
 	%%% allow_anonymous false
@@ -63,6 +62,10 @@ sed -Ee 's/^[ 	]+%%% //' <<!ENDMOSQUITTOCONF > $MOSQPATH
 	%%% cafile /var/mosquitto/ssl/ca.crt
 	%%% certfile /var/mosquitto/ssl/server.crt
 	%%% keyfile /var/mosquitto/ssl/server.key
+	%%%
+	%%% # WebSockets Connections
+	%%% listener 8099
+  %%% protocol websockets
 !ENDMOSQUITTOCONF
 
-chmod 640 $MOSQPATH
+chmod 640 $MOSQUITTO_PATH

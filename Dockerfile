@@ -10,11 +10,19 @@ ARG MOSQUITTO_VERSION
 ARG LWS_VERSION
 
 # DeviceLinks MQTT Broker Envs
-ENV DLMB_MYSQL_HOST=127.0.0.1 \
-    DLMB_MYSQL_PORT=3306 \
-    DLMB_MYSQL_DB=mosquitto \
-    DLMB_MYSQL_USERNAME=root \
-    DLMB_MYSQL_PASSWORD=123456
+# MySQL
+ENV DLMB_MYSQL_HOST=127.0.0.1
+ENV DLMB_MYSQL_PORT=3306
+ENV DLMB_MYSQL_DB=devicelinks
+ENV DLMB_MYSQL_USERNAME=root
+ENV DLMB_MYSQL_PASSWORD=123456
+# auth hasher
+ENV DLMB_AUTH_HASHER=argon2id
+ENV DLMB_AUTH_HASHER_SALT_SIZE=16
+ENV DLMB_AUTH_HASHER_ITERATIONS=10
+ENV DLMB_AUTH_HASHER_KEYLEG=64
+ENV DLMB_AUTH_HASHER_MEMORY=65536
+ENV DLMB_AUTH_HASHER_PARALLELISM=1
 
 # Get mosquitto build dependencies.
 RUN set -ex; \
@@ -98,8 +106,7 @@ COPY --from=mosquitto_builder /usr/local/include/ /usr/local/include/
 COPY ./ ./
 RUN set -ex; \
     go build -buildmode=c-archive go-auth.go; \
-    go build -buildmode=c-shared -o go-auth.so; \
-	  go build pw-gen/pw.go
+    go build -buildmode=c-shared -o go-auth.so
 
 #Start from a new image.
 FROM debian:stable-slim
@@ -135,7 +142,6 @@ RUN set -ex; \
 
 #Copy confs, plugin so and mosquitto binary.
 COPY --from=mosquitto_builder /app/mosquitto/ /var/mosquitto/
-COPY --from=go_auth_builder /app/pw /var/mosquitto/plugins/pw
 COPY --from=go_auth_builder /app/go-auth.so /var/mosquitto/plugins/go-auth.so
 COPY --from=mosquitto_builder /usr/local/sbin/mosquitto /usr/sbin/mosquitto
 
@@ -148,7 +154,7 @@ COPY --from=mosquitto_builder /usr/local/bin/mosquitto_rr /usr/bin/mosquitto_rr
 
 RUN ldconfig;
 
-EXPOSE 1883 8883 8884
+EXPOSE 1883 8883 8884 8099
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["/usr/local/shell/startup.sh" ,"$DLMB_MYSQL_HOST","$DLMB_MYSQL_PORT","$DLMB_MYSQL_DB","$DLMB_MYSQL_USERNAME","$DLMB_MYSQL_PASSWORD"]
+CMD ["/usr/local/shell/startup.sh"]
